@@ -1,38 +1,40 @@
 package creator
 
 import (
-	"fmt"
+	"errors"
+
+	"github.com/anarchymonkey/design-patterns/creational/factory/product"
 )
 
-type Transport interface {
-	Deliver()
-}
+type TransportType string
 
-type Truck struct {
-	ratePerHour int
-}
+const (
+	TRUCK      TransportType = "TRUCK"
+	TRAIN      TransportType = "TRAIN"
+	SHIP       TransportType = "SHIP"
+	SUB_MARINE TransportType = "SUB_MARINE"
+)
 
-type Ship struct {
-	ratePerHour int
-}
-
-func (truck Truck) Deliver() {
-	fmt.Println("Truck will deliver your goods in 1-3 biz days, rate per hour is", truck.ratePerHour)
-}
-
-func (ship Ship) Deliver() {
-	fmt.Println("Ship will deliver your goods in 1-3 biz days, rate per hour is", ship.ratePerHour)
-}
-
-// this is a factory pattern, we are generating the data dynamically with a particular transport type, so the deliver method remains the same but the implementation differs by a huge margin
-func TransportFactory(transportType string, rate int) Transport {
-
+// concrete creator 1
+func RoadTransportFactory(transportType TransportType) (product.TransportVehicle, error) {
 	switch transportType {
-	case "Truck":
-		return &Truck{ratePerHour: rate}
-	case "Ship":
-		return &Ship{ratePerHour: rate}
+	case TRUCK:
+		return product.Truck{
+			Code: "1102",
+		}, nil
 	default:
-		panic("Wront transporttype selected")
+		return nil, errors.New("this type is not supported")
+	}
+}
+
+// concrete creator 2
+func SeaTransportFactory(transportType TransportType) (product.TransportVehicle, error) {
+	switch transportType {
+	case SHIP:
+		return product.Ship{
+			Code: "MS5102",
+		}, nil
+	default:
+		return nil, errors.New("ship type not supported")
 	}
 }
